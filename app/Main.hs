@@ -20,9 +20,15 @@ argsParser :: Parser Args
 argsParser = Args
              <$> (
   PasswordData
-  <$> argument str (metavar "UNIQUEKEY" <> help "Unique key")
-  <*> argument str (metavar "SALT" <> help "Salt")
-  <*> argument plReader (metavar "PASSWORDLENGTH" <> help "Password length (1 ~ 32)")
+  <$> argument str (metavar "unique-key" <> help "Unique key")
+  <*> argument str (metavar "salt" <> help "Salt")
+  <*> option plReader (
+      long "length"
+      <> short 'l'
+      <> value 8
+      <> metavar "password-length"
+      <> help "Password length (1 ~ 32; Default is 8)."
+      )
   )
 
 announce :: String -> String
