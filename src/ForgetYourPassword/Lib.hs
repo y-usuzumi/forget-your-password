@@ -8,11 +8,13 @@ module ForgetYourPassword.Lib
 import           Crypto.Hash
 import qualified Data.ByteString.Char8 as C8
 import           Data.Char
+import qualified Data.Text             as T
+import           Data.Text.Encoding
 import           Numeric
 
 data PasswordData =
-  PasswordData { uniqueKey :: String
-               , salt :: String
+  PasswordData { uniqueKey      :: String
+               , salt           :: String
                , passwordLength :: {-# UNPACK #-} !Int
                }
 
@@ -36,4 +38,4 @@ makePassword pd@PasswordData{..} = map intToPasswordChar $ take passwordLength $
     hashToInt = fst . head . readHex
 
     makeHash :: PasswordData -> String
-    makeHash PasswordData{..} = C8.unpack $ digestToHexByteString (hash . C8.pack $ (uniqueKey ++ salt) :: Digest SHA256)
+    makeHash PasswordData{..} = C8.unpack $ digestToHexByteString (hash . encodeUtf8 $ T.pack (uniqueKey ++ "\xE0031" ++ salt) :: Digest SHA256)
