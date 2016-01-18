@@ -14,26 +14,28 @@ $ cabal install
 ### 用法：
 
 ```bash
+$ forget-your-password -h
 Forget Your Password
 
-Usage: forget-your-password unique-key salt password-length
+Usage: forget-your-password unique-key salt [-l|--length password-length]
   Password generator
 
-Available options:
-  -h,--help                Show this help text
-  unique-key               Unique key
-  salt                     Salt
-  password-length          Password length (1 ~ 32). Default is 8
+  Available options:
+    -h,--help                Show this help text
+    unique-key               Unique key
+    salt                     Salt
+    -l,--length password-length
+			     Password length (1 ~ 32; Default is 8).
 ```
 
 示例如下：
 
 ```bash
 $ forget-your-password youtube.com jiangzemin
-Your password is: n62oJ8pG
+Your password is: sTtbELsY
 
 $ forget-your-password youtube.com jiangzemin -l 16
-Your password is: n62oJ8pGrDFqUHe9
+Your password is: sTtbELsYyKJ4t4lG
 ```
 
 好吧只是截断规则。。有点二逼么？我倒不觉得。。
