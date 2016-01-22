@@ -6,24 +6,17 @@ module ForgetYourPassword.Lib
     ) where
 
 import           Crypto.Hash
-import qualified Data.ByteString.Char8 as C8
+import qualified Data.ByteString.Char8    as C8
 import           Data.Char
-import qualified Data.Text             as T
+import           Data.Maybe
+import qualified Data.Text                as T
 import           Data.Text.Encoding
+import           ForgetYourPassword.Model (PasswordData (..))
 import           Numeric
 
-data PasswordData =
-  PasswordData { uniqueKey      :: String
-               , salt           :: String
-               , passwordLength :: {-# UNPACK #-} !Int
-               }
-
-
-
 makePassword :: PasswordData -> String
-makePassword pd@PasswordData{..} = map intToPasswordChar $ take passwordLength $ (splitto . hashToInt . makeHash) pd
+makePassword PasswordData{..} = map intToPasswordChar $ (take passwordLength . splitto . hashToInt) makeHash
   where
-
     intToPasswordChar :: Integer -> Char
     intToPasswordChar i
       | i >= 0 && i <= 9 = chr (48 + fromIntegral i)  -- 0..9
@@ -37,5 +30,8 @@ makePassword pd@PasswordData{..} = map intToPasswordChar $ take passwordLength $
     hashToInt :: String -> Integer
     hashToInt = fst . head . readHex
 
-    makeHash :: PasswordData -> String
-    makeHash PasswordData{..} = C8.unpack $ digestToHexByteString (hash . encodeUtf8 $ T.pack (uniqueKey ++ "\xE0031" ++ salt) :: Digest SHA256)
+    makeHash :: String
+    makeHash = C8.unpack $ digestToHexByteString (hash . encodeUtf8 $ T.pack mix :: Digest SHA256)
+
+    mix :: String
+    mix = uniqueKey ++ replicate (fromMaybe 1 version) '\xE0031' ++ salt
